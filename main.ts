@@ -38,12 +38,18 @@ const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 // rejected entry: UTF-8 text, 1–140 characters, not whitespace-only,
 // exactly one line (no newline at all), no leading/trailing whitespace
 // that would pad the judged text. The line is 123 characters.
+// It is also pure ASCII, so its character count and its byte count are
+// the same 123 — no multi-byte surprise in the leaderboard's Size column,
+// and any later edit that smuggles in a curly quote or emoji fails loudly
+// here instead of shipping a different byte count.
 if (
   LINE.length < 1 ||
   LINE.length > 140 ||
   LINE.trim() === '' ||
   LINE !== LINE.trim() ||
-  /[\r\n]/.test(LINE)
+  /[\r\n]/.test(LINE) ||
+  // eslint-disable-next-line no-control-regex
+  /[^\x00-\x7F]/.test(LINE)
 ) {
   throw new Error(`entry violates the gate: ${LINE.length} chars`);
 }
