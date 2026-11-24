@@ -106,4 +106,50 @@ finally checked out" is quotable — the line a colleague forwards.
   revision turns, so thinking_revised must PASS on re-check.
 
 ## 7. HANDOFF — top-level agent, AFTER this builder run completes
+1. muse.db SELECT usage rows for this builder subagent
+   6818dcea-3d59-4aab-b2b5-6596432d8528 and the top-level agent's own
+   session id 1bd1b3e5-a472-4ef6-96e4-679375106ca7:
+   SELECT u.agent_id AS agent_id, u.message_id AS message_id,
+   u.created_at AS created_at, u.input_tokens AS input_tokens,
+   u.output_tokens AS output_tokens, a.model AS model
+   FROM agent.agent_message_token_usage u
+   JOIN agent.agents a ON a.agent_id = u.agent_id
+   WHERE u.agent_id IN ('6818dcea-3d59-4aab-b2b5-6596432d8528','1bd1b3e5-a472-4ef6-96e4-679375106ca7')
+   ORDER BY u.created_at DESC LIMIT 500
+   Write rows unchanged, one JSON object per line, to
+   ~/workspace/makefun/submit/u-kreutzx-usage.jsonl
+2. Re-bundle (same flags as v1 + --muse-usage <file>) to
+   ~/workspace/makefun/submit/u-kreutzx-transcripts-v2.tar.gz, from the
+   kit at ~/workspace/makefun/u-kreutzx-the-one-line-exit-1dc652d1-kit/
+   (IMPORTANT: keep --no-family, or the bundle again pulls in ~16
+   unrelated sessions that only wrote to ~/memory/2026-11-24.md; same
+   flags: --repo ~/workspace/makefun/u-kreutzx-the-one-line-exit-1dc652d1
+   --system-prompt ~/workspace/system/system_prompt.md
+   --harness muse --provider meta --model muse-spark-1.3 --effort default
+   --prompt-file ~/workspace/makefun/submit/u-kreutzx-prompt.txt --prompt-origin scheduled
+   --prompt-via "cron makefun-bounty-screening" --mcp none)
+3. Re-run check on the LATEST commit (see §8) + bundle v2;
+   expect thinking_priced PASS and thinking_revised PASS (main.ts now
+   written in 2 messages: create + ASCII-gate edit), everything else
+   still PASS.
+4. Submit (quota can_submit true, day cap 5, taken 0 — re-verify before
+   submitting):
+   node cli/makefun.mjs submit --competition
+   u-kreutzx-the-one-line-exit-1dc652d1 --repo-url
+   https://github.com/epanpai/u-kreutzx-the-one-line-exit-1dc652d1
+   --commit <latest sha from §8> --title "I have finally checked out" --bundle
+   ~/workspace/makefun/submit/u-kreutzx-transcripts-v2.tar.gz --keypair
+   ~/workspace/makefun/makefun-keypair.json
+   (run from inside the unpacked kit dir)
+   Deadline 2026-11-26T09:50:00Z (= 27 Nov 16:50 WIB); blind round 1 cutoff
+   2026-11-25T01:49:12Z (= 25 Nov 08:49 WIB) — submit before then to catch round 1.
+   Save receipt to ~/workspace/makefun/submit/receipt-<submission-id>.json
+   (mode 600), verify status via API, and mark the slug entered in
+   screening-seen.json. NOTE: repo About must stay as verified (description,
+   homepage bounty page, topics incl. makefun) — a 422 repo_about on submit
+   means re-check it via `gh api repos/epanpai/u-kreutzx-the-one-line-exit-1dc652d1` before retrying.
+
+## 8. Final commit to submit
+- (diisi setelah commit ketiga: sha commit yang memuat §7 ini)
+
 
