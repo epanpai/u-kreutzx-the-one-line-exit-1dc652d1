@@ -150,6 +150,10 @@ finally checked out" is quotable — the line a colleague forwards.
    means re-check it via `gh api repos/epanpai/u-kreutzx-the-one-line-exit-1dc652d1` before retrying.
 
 ## 8. Final commit to submit
-- (diisi setelah commit ketiga: sha commit yang memuat §7 ini)
+- Submit the LATEST HEAD at handoff time. At BUILD_LOG write time the
+  latest commit was 14b65ebcc75045c1dabb7f7bd3bdb2b4624dc930 ("BUILD_LOG:
+  quota, bundle/check v1 results, handoff for re-bundle + submit").
+  Re-check with `git rev-parse HEAD` before submitting — if a newer
+  commit exists, submit that one instead.
 
 
